@@ -1,0 +1,39 @@
+---
+---
+
+@import "minima";
+
+.project-cards {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+    
+    .project-card {
+        border-radius: 10px;
+        min-width: 100px;
+        background-color: #ddd;
+        overflow: hidden;
+
+        a {
+            text-decoration: none;
+            color: black;
+            &:hover {
+                color: black;
+            }
+        }
+                        
+        &__image {
+            img {
+                height: 200px;
+                width: 360px;
+                object-fit: cover;
+            }
+        }
+
+        &__description {
+            padding: 5px;
+        }
+    }
+}
