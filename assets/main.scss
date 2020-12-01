@@ -3,18 +3,23 @@
 
 @import "minima";
 
+body {
+    color: #333;
+}
+
 .project-cards {
     margin-top: 15px;
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
     justify-content: space-between;
     
     
     .project-card {
         border-radius: 10px;
-        min-width: 100px;
+        -ms-flex: auto;
         background-color: #ddd;
         overflow: hidden;
+        margin-bottom: 15px;
 
         a {
             text-decoration: none;
@@ -35,5 +40,26 @@
         &__description {
             padding: 5px;
         }
+    }
+}
+
+.job {
+    padding: 10px 0px;
+    border-bottom: 1px solid grey;
+
+    &__company {
+        font-size: large;
+        font-weight: bold;
+        color: #444;
+    }
+
+    &__period {
+        font-style: italic;
+    }
+
+    &__tag {
+        background-color: rgb(233, 233, 233);
+        border-radius: 5px;
+        padding: 2px 8px;
     }
 }

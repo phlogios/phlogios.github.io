@@ -1,7 +1,24 @@
 ---
-layout: projects
+layout: default
 title: Projects
 permalink: /projects/
 ---
 
 These are the projects I've worked on.
+
+<div class="project-cards">
+    {% for project in site.projects reversed %}
+    <div class="project-card">
+      <a href="{{ project.url }}">
+        <div class="project-card__image">
+          <img src="{{ project.image }}">
+        </div>
+        <div class="project-card__description">
+          <strong>
+            {{ project.title }}
+          </strong>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
