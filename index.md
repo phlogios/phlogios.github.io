@@ -4,3 +4,5 @@
 
 layout: home
 ---
+
+Welcome to my website and portfolio. Check the menu up top to find my projects and my CV.

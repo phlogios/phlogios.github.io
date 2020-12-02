@@ -43,6 +43,12 @@ body {
     }
 }
 
+.project {
+    &__image {
+        text-align: center;
+    }
+}
+
 .job {
     padding: 10px 0px;
     border-bottom: 1px solid grey;
