@@ -1,6 +1,7 @@
 ---
 start_year: 2019
 end_year: 2021
+length: 2 years
 company: Försäkringskassan (Contractor)
 tags:
     - VueJS
