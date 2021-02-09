@@ -1,6 +1,6 @@
 ---
 start_year: 2019
-end_year: current
+end_year: 2021
 company: Försäkringskassan (Contractor)
 tags:
     - VueJS
