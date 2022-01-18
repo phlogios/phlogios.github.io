@@ -9,4 +9,4 @@ tags:
     - Procedural generation
 ---
 
-Developed a prototype of an unannounced game title in a team of 3 senior developers, to be pitched to publishers. Focus on gameplay programming, tooling, procedural generation, and performance optimization.
+Developed a prototype of an unannounced first-person game title in a team of 3 senior developers, to be pitched to publishers. Focus on gameplay programming, tooling, procedural generation, and performance optimization.
