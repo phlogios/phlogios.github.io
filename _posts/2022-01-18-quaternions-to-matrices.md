@@ -19,7 +19,7 @@ What I did wrong was I had guessed how quaternions are converted into matrices, 
 localTransformationMatrix = glm::rotate(localTransformationMatrix, glm::angle(m_quaternion), glm::axis(m_quaternion));
 ```
 
-I made a rotation matrix by using glm's angle-axis rotate function, where the angle was calculated from the quaternion with the `glm::angle` function, and the axis calculated calculated with the `glm::axis` function. This worked in most cases, but failed in this rare case.
+I made a rotation matrix by using glm's angle-axis rotate function, where the angle was calculated from the quaternion with the `glm::angle` function, and the axis calculated with the `glm::axis` function. This worked in most cases, but failed in this rare case.
 
 There is a much simpler way to do this. Enter `glm::mat4_cast`, a function that correctly converts a quaternion to a 3x3 matrix, and then converts that to a 4x4 matrix by adding zeroes in the last column and row. This is how my code looks now:
 
