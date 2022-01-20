@@ -62,7 +62,9 @@ function mulmatvec(mat, vec) {
         vec.x * data[12] + vec.y * data[13] + vec.z * data[14] + vec.w * data[15]
     );
 
-    if (out.w !== 1.0) {
+    if(vec.w === 0) out.w = 0;
+
+    if (vec.w !== 0.0 && out.w !== 1.0) {
         out = out.mul(1.0/out.w);
     }
     return out;
@@ -77,7 +79,9 @@ function mulvecmat(vec, mat) {
         vec.x * data[3] + vec.y * data[7] + vec.z * data[11] + vec.w * data[15]
     );
 
-    if (out.w !== 1.0) {
+    if(vec.w === 0) out.w = 0;
+
+    if (vec.w !== 0.0 && out.w !== 1.0) {
         out = out.mul(1.0/out.w);
     }
     return out;

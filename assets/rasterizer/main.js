@@ -6,12 +6,12 @@ window.onload = function () {
     context.imageSmoothingEnabled = false;
     const aspectRatio = 640.0 / 480.0;
     let triangles = [
-        0, 1, 3, 3, 1, 2,
-        1, 5, 2, 2, 5, 6,
-        5, 4, 6, 6, 4, 7,
-        4, 0, 7, 7, 0, 3,
-        3, 2, 7, 7, 2, 6,
-        4, 5, 0, 0, 5, 1
+        {v0: 0, v1: 1, v2: 3}, {v0: 3, v1: 1, v2: 2},
+        {v0: 1, v1: 5, v2: 2}, {v0: 2, v1: 5, v2: 6},
+        {v0: 5, v1: 4, v2: 6}, {v0: 6, v1: 4, v2: 7},
+        {v0: 4, v1: 0, v2: 7}, {v0: 7, v1: 0, v2: 3},
+        {v0: 3, v1: 2, v2: 7}, {v0: 7, v1: 2, v2: 6},
+        {v0: 4, v1: 5, v2: 0}, {v0: 0, v1: 5, v2: 1}
     ];
 
     let vertices = [
@@ -24,6 +24,23 @@ window.onload = function () {
         new Vector4(1, 1, 1, 1),
         new Vector4(-1, 1, 1, 1)
     ];
+
+    let faceNormals = [];
+    for(let i = 0; i < triangles.length; i++) {
+        const v1 = vertices[triangles[i].v0];
+        const v2 = vertices[triangles[i].v1];
+        const v3 = vertices[triangles[i].v2];
+
+        const v1_3 = new Vector3(v1.x, v1.y, v1.z);
+        const v2_3 = new Vector3(v2.x, v2.y, v2.z);
+        const v3_3 = new Vector3(v3.x, v3.y, v3.z);
+
+        const normal3 = vec3cross(
+            (v2_3.sub(v1_3)),
+            (v3_3.sub(v1_3))).normalized();
+
+        faceNormals[i] = new Vector4(normal3.x, normal3.y, normal3.z, 0.0);
+    }
 
     let myImageData = context.createImageData(640, 480);
 
@@ -38,12 +55,20 @@ window.onload = function () {
 
     clear();
 
+    function drawPointShaded(point, normal) {
+        const pixelIndex = (Math.floor(point.x + point.y*640)) * 4;
+        myImageData.data[pixelIndex] = 255 * (normal.z * 0.5 + 0.5);
+        myImageData.data[pixelIndex+1] = 255 * (normal.z * 0.5 + 0.5);
+        myImageData.data[pixelIndex+2] = 255 * (normal.z * 0.5 + 0.5);
+
+    }
+
     function drawPoint(point) {
 
-        const pixelIndex = (Math.floor(point.x) + Math.floor(point.y)*640) * 4;
+        const pixelIndex = (Math.floor(point.x + point.y*640)) * 4;
         myImageData.data[pixelIndex] = 255;
         myImageData.data[pixelIndex+1] = 255;
-        myImageData.data[pixelIndex+2] = 0;
+        //myImageData.data[pixelIndex+2] = 0;
     }
 
     function sortTriangleVertices(triangle) {
@@ -54,7 +79,7 @@ window.onload = function () {
         return new Vector3(triangle[0].x + ((triangle[1].y - triangle[0].y) / (triangle[2].y - triangle[0].y)) * (triangle[2].x - triangle[0].x), triangle[1].y, 0);
     }
 
-    function fillBottomFlatTriangle(v1, v2, v3) {
+    function fillBottomFlatTriangle(v1, v2, v3, normal) {
         let invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
         let invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
         if(invslope1 < invslope2) {
@@ -71,14 +96,14 @@ window.onload = function () {
             const clampedx1 = Math.min(640, curx1);
             const clampedx2 = Math.max(0, curx2);
             for(let x = clampedx1; x >= clampedx2; x--) {
-                drawPoint(new Vector2(x, scanlineY));
+                drawPointShaded(new Vector2(x, scanlineY), normal);
             }
             curx1 += invslope1;
             curx2 += invslope2;
         }
     }
 
-    function fillTopFlatTriangle(v1, v2, v3) {
+    function fillTopFlatTriangle(v1, v2, v3, normal) {
         let invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
         let invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
         if(invslope2 < invslope1) {
@@ -95,7 +120,7 @@ window.onload = function () {
             const clampedx1 = Math.min(640, curx1);
             const clampedx2 = Math.max(0, curx2);
             for(let x = clampedx1; x >= clampedx2; x--) {
-                drawPoint(new Vector2(x, scanlineY));
+                drawPointShaded(new Vector2(x, scanlineY), normal);
             }
             curx1 -= invslope1;
             curx2 -= invslope2;
@@ -118,43 +143,52 @@ window.onload = function () {
         time += 0.01;
 
         let translationMatrix = new Mat4([
-            1,0,0,0,
-            0,1,0,0,
-            0,0,1, -5 + Math.sin(time*2),
+            1,0,0,Math.sin(time),
+            0,1,0,Math.cos(time),
+            0,0,1,-5,
             0,0,0,1
         ]);
 
         quat.pitch(0.01);
         quat.yawGlobal(0.01);
         let rotationYMatrix = quat.toMat4().transposed();
-
-        let mat3 = perspectiveMatrix.mul(translationMatrix.mul(rotationYMatrix));
-
+        let modelMatrix = translationMatrix.mul(rotationYMatrix);
+        let mat3 = perspectiveMatrix.mul(modelMatrix);
         let transformedPoints = vertices
             .map(vertex => mulmatvec(mat3, vertex));
         transformedPoints.forEach(vertex => {
             vertex.x = Math.floor((vertex.x + 1) * 320);
             vertex.y = Math.floor((vertex.y + 1) * 240);
-        })
+        });
 
-        for(let t = 0; t < triangles.length / 3; t++) {
-            let t0 = t*3+0;
-            let t1 = t0+1;
-            let t2 = t0+2;
+        let transformedNormals = faceNormals.map(normal => mulmatvec(mat3, normal).normalized());
+
+        for(let t = 0; t < triangles.length; t++) {
+            const v1 = transformedPoints[triangles[t].v0];
+            const v2 = transformedPoints[triangles[t].v1];
+            const v3 = transformedPoints[triangles[t].v2];
+
             let transformedTriangle = [
-                transformedPoints[triangles[t0]],
-                transformedPoints[triangles[t1]],
-                transformedPoints[triangles[t2]]
+                v1, v2, v3
             ];
+
+            const v1_3 = new Vector3(v1.x, v1.y, v1.z);
+            const v2_3 = new Vector3(v2.x, v2.y, v2.z);
+            const v3_3 = new Vector3(v3.x, v3.y, v3.z);
+            let cullingNormal = vec3cross(
+                (v2_3.sub(v1_3)),
+                (v3_3.sub(v1_3))).normalized()
+            const normal = transformedNormals[t];
+            if (cullingNormal.z >= 0) continue;
 
             transformedTriangle = sortTriangleVertices(transformedTriangle);
             if (transformedTriangle[1].y == transformedTriangle[2].y) {
-                fillBottomFlatTriangle(transformedTriangle[0], transformedTriangle[1], transformedTriangle[2]);
+                fillBottomFlatTriangle(transformedTriangle[0], transformedTriangle[1], transformedTriangle[2], normal);
             } else if(transformedTriangle[0].y == transformedTriangle[1].y) {
-                fillTopFlatTriangle(transformedTriangle[1], transformedTriangle[0], transformedTriangle[2]);
+                fillTopFlatTriangle(transformedTriangle[1], transformedTriangle[0], transformedTriangle[2], normal);
             } else {
-                fillBottomFlatTriangle(transformedTriangle[0], transformedTriangle[1], transformedTriangle[2]);
-                fillTopFlatTriangle(transformedTriangle[1], transformedTriangle[0], transformedTriangle[2]);
+                fillBottomFlatTriangle(transformedTriangle[0], transformedTriangle[1], transformedTriangle[2], normal);
+                fillTopFlatTriangle(transformedTriangle[1], transformedTriangle[0], transformedTriangle[2], normal);
             }
 
             // for(let i = 0; i < 3; i++) {
