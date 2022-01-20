@@ -55,16 +55,16 @@ window.onload = function () {
     }
 
     function fillBottomFlatTriangle(v1, v2, v3) {
-        let invslope1 = (v2.x - v1.x) / (v2.y - v1.y) * aspectRatio;
-        let invslope2 = (v3.x - v1.x) / (v3.y - v1.y) * aspectRatio;
+        let invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
+        let invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
         if(invslope1 < invslope2) {
             let temp = invslope1; invslope1 = invslope2; invslope2 = temp;
         }
 
-        let curx1 = (v1.x + 1) * 320;
+        let curx1 = v1.x;
         let curx2 = curx1;
-        const yStart = (v1.y + 1) * 240;
-        const yEnd = (v2.y + 1) * 240;
+        const yStart = v1.y;
+        const yEnd = v2.y;
 
         for (let scanlineY = yStart; scanlineY <= yEnd; scanlineY++)
         {
@@ -79,16 +79,16 @@ window.onload = function () {
     }
 
     function fillTopFlatTriangle(v1, v2, v3) {
-        let invslope1 = (v3.x - v1.x) / (v3.y - v1.y) * aspectRatio;
-        let invslope2 = (v3.x - v2.x) / (v3.y - v2.y) * aspectRatio;
+        let invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
+        let invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
         if(invslope2 < invslope1) {
             let temp = invslope1; invslope1 = invslope2; invslope2 = temp;
         }
 
-        let curx1 = (v3.x + 1) * 320;
+        let curx1 = v3.x;
         let curx2 = curx1;
-        const yStart = (v3.y + 1) * 240;
-        const yEnd = (v1.y + 1) * 240;
+        const yStart = v3.y;
+        const yEnd = v1.y;
 
         for (let scanlineY = yStart; scanlineY > yEnd; scanlineY--)
         {
@@ -117,7 +117,6 @@ window.onload = function () {
         clear();
         time += 0.01;
 
-        let mat1 = new Mat4();
         let translationMatrix = new Mat4([
             1,0,0,0,
             0,1,0,0,
@@ -128,17 +127,15 @@ window.onload = function () {
         quat.pitch(0.01);
         quat.yawGlobal(0.01);
         let rotationYMatrix = quat.toMat4().transposed();
-        //let rotationYMatrix = quat.yawGlobal(0.1).toMat4();
-        // rotationYMatrix = new Mat4([
-        //     Math.cos(time), 0, Math.sin(time), 0,
-        //     0, 1, 0, 0,
-        //     -Math.sin(time), 0, Math.cos(time), 0,
-        //     0, 0, 0, 1
-        // ]);
 
         let mat3 = perspectiveMatrix.mul(translationMatrix.mul(rotationYMatrix));
 
-        let transformedPoints = vertices.map(vertex => mulmatvec(mat3, vertex));
+        let transformedPoints = vertices
+            .map(vertex => mulmatvec(mat3, vertex));
+        transformedPoints.forEach(vertex => {
+            vertex.x = Math.floor((vertex.x + 1) * 320);
+            vertex.y = Math.floor((vertex.y + 1) * 240);
+        })
 
         for(let t = 0; t < triangles.length / 3; t++) {
             let t0 = t*3+0;
@@ -160,12 +157,9 @@ window.onload = function () {
                 fillTopFlatTriangle(transformedTriangle[1], transformedTriangle[0], transformedTriangle[2]);
             }
 
-            for(let i = 0; i < 3; i++) {
-                let sspoint = transformedTriangle[i].clone();
-                sspoint.x = (sspoint.x + 1) * 320;
-                sspoint.y = (sspoint.y + 1) * 240;
-                //drawPoint(sspoint);
-            }
+            // for(let i = 0; i < 3; i++) {
+            //     drawPoint(transformedTriangle[i]);
+            // }
         }
 
         context.putImageData(myImageData, 0, 0);
