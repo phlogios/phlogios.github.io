@@ -31,13 +31,9 @@ window.onload = function () {
         const v2 = vertices[triangles[i].v1];
         const v3 = vertices[triangles[i].v2];
 
-        const v1_3 = new Vector3(v1.x, v1.y, v1.z);
-        const v2_3 = new Vector3(v2.x, v2.y, v2.z);
-        const v3_3 = new Vector3(v3.x, v3.y, v3.z);
-
         const normal3 = vec3_normalized(vec3cross(
-            (vec3_sub(v2_3, v1_3)),
-            (vec3_sub(v3_3, v1_3))));
+            (vec3_sub(v2, v1)),
+            (vec3_sub(v3, v1))));
 
         faceNormals[i] = new Vector4(normal3.x, normal3.y, normal3.z, 0.0);
     }
@@ -57,10 +53,10 @@ window.onload = function () {
 
     function drawPointShaded(point, normal) {
         const pixelIndex = (Math.floor(point.x + point.y*640)) * 4;
-        myImageData.data[pixelIndex] = 255 * (normal.z * 0.5 + 0.5);
-        myImageData.data[pixelIndex+1] = 255 * (normal.z * 0.5 + 0.5);
-        myImageData.data[pixelIndex+2] = 255 * (normal.z * 0.5 + 0.5);
-
+        const shade = 255 * (normal.z * 0.5 + 0.5);
+        myImageData.data[pixelIndex] = shade;
+        myImageData.data[pixelIndex+1] = shade;
+        myImageData.data[pixelIndex+2] = shade;
     }
 
     function drawPoint(point) {
@@ -91,12 +87,15 @@ window.onload = function () {
         const yStart = v1.y;
         const yEnd = v2.y;
 
+        let pixel = new Vector2();
         for (let scanlineY = yStart; scanlineY <= yEnd; scanlineY++)
         {
+            pixel.y = scanlineY;
             const clampedx1 = Math.min(640, curx1);
             const clampedx2 = Math.max(0, curx2);
             for(let x = clampedx1; x >= clampedx2; x--) {
-                drawPointShaded(new Vector2(x, scanlineY), normal);
+                pixel.x = x;
+                drawPointShaded(pixel, normal);
             }
             curx1 += invslope1;
             curx2 += invslope2;
@@ -115,12 +114,15 @@ window.onload = function () {
         const yStart = v3.y;
         const yEnd = v1.y;
 
+        let pixel = new Vector2();
         for (let scanlineY = yStart; scanlineY > yEnd; scanlineY--)
         {
+            pixel.y = scanlineY;
             const clampedx1 = Math.min(640, curx1);
             const clampedx2 = Math.max(0, curx2);
             for(let x = clampedx1; x >= clampedx2; x--) {
-                drawPointShaded(new Vector2(x, scanlineY), normal);
+                pixel.x = x;
+                drawPointShaded(pixel, normal);
             }
             curx1 -= invslope1;
             curx2 -= invslope2;
@@ -172,12 +174,9 @@ window.onload = function () {
                 v1, v2, v3
             ];
 
-            const v1_3 = new Vector3(v1.x, v1.y, v1.z);
-            const v2_3 = new Vector3(v2.x, v2.y, v2.z);
-            const v3_3 = new Vector3(v3.x, v3.y, v3.z);
             let cullingNormal = vec3_normalized(vec3cross(
-                (vec3_sub(v2_3, v1_3)),
-                (vec3_sub(v3_3, v1_3))));
+                (vec3_sub(v2, v1)),
+                (vec3_sub(v3, v1))));
             const normal = transformedNormals[t];
             if (cullingNormal.z >= 0) continue;
 
