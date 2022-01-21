@@ -35,9 +35,9 @@ window.onload = function () {
         const v2_3 = new Vector3(v2.x, v2.y, v2.z);
         const v3_3 = new Vector3(v3.x, v3.y, v3.z);
 
-        const normal3 = vec3cross(
-            (v2_3.sub(v1_3)),
-            (v3_3.sub(v1_3))).normalized();
+        const normal3 = vec3_normalized(vec3cross(
+            (vec3_sub(v2_3, v1_3)),
+            (vec3_sub(v3_3, v1_3))));
 
         faceNormals[i] = new Vector4(normal3.x, normal3.y, normal3.z, 0.0);
     }
@@ -72,7 +72,7 @@ window.onload = function () {
     }
 
     function sortTriangleVertices(triangle) {
-        return triangle.sort((v1, v2) => { return v1.y - v2.y });
+        return triangle.sort(function(v1, v2) { return v1.y - v2.y });
     }
 
     function getSplitVector(triangle) {
@@ -149,19 +149,19 @@ window.onload = function () {
             0,0,0,1
         ]);
 
-        quat.pitch(0.01);
-        quat.yawGlobal(0.01);
-        let rotationYMatrix = quat.toMat4().transposed();
-        let modelMatrix = translationMatrix.mul(rotationYMatrix);
-        let mat3 = perspectiveMatrix.mul(modelMatrix);
+        quat_pitch(quat, 0.01);
+        quat_yawGlobal(quat, 0.01);
+        let rotationYMatrix = transpose(quat_toMat4(quat));
+        let modelMatrix = matmulmat(translationMatrix, rotationYMatrix);
+        let mat3 = matmulmat(perspectiveMatrix, modelMatrix);
         let transformedPoints = vertices
-            .map(vertex => mulmatvec(mat3, vertex));
-        transformedPoints.forEach(vertex => {
+            .map(function(vertex) { return mulmatvec(mat3, vertex) });
+        transformedPoints.forEach(function(vertex) {
             vertex.x = Math.floor((vertex.x + 1) * 320);
             vertex.y = Math.floor((vertex.y + 1) * 240);
         });
 
-        let transformedNormals = faceNormals.map(normal => mulmatvec(mat3, normal).normalized());
+        let transformedNormals = faceNormals.map(function(normal) { return vec4_normalized(mulmatvec(mat3, normal)); });
 
         for(let t = 0; t < triangles.length; t++) {
             const v1 = transformedPoints[triangles[t].v0];
@@ -175,9 +175,9 @@ window.onload = function () {
             const v1_3 = new Vector3(v1.x, v1.y, v1.z);
             const v2_3 = new Vector3(v2.x, v2.y, v2.z);
             const v3_3 = new Vector3(v3.x, v3.y, v3.z);
-            let cullingNormal = vec3cross(
-                (v2_3.sub(v1_3)),
-                (v3_3.sub(v1_3))).normalized()
+            let cullingNormal = vec3_normalized(vec3cross(
+                (vec3_sub(v2_3, v1_3)),
+                (vec3_sub(v3_3, v1_3))));
             const normal = transformedNormals[t];
             if (cullingNormal.z >= 0) continue;
 

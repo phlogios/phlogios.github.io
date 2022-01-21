@@ -1,99 +1,108 @@
 function Vector2(x, y) {
     this.x = x;
     this.y = y;
-
-    this.add = (other) => {
-        return new Vector2(this.x + other.x, this.y + other.y);
-    };
-
-    this.sub = (other) => {
-        return new Vector2(this.x - other.x, this.y - other.y);
-    };
-
-    this.mul = (scalar) => {
-        return new Vector2(this.x * scalar, this.y * scalar);
-    };
-
-    this.negated = () => {
-        return new Vector2(-this.x, -this.y);
-    };
-
-    this.magnitude = () => {
-        return Math.sqrt((this.x * this.x) + (this.y * this.y));
-    };
-
-    this.distance = (other) => {
-        return this.sub(other).magnitude();
-    };
-
-    this.normalized = () => {
-        let magnitude = this.magnitude();
-        let newVector = new Vector2(this.x, this.y);
-        if(magnitude > 0) {
-            newVector = newVector.mul(1.0/magnitude);
-        }
-        //console.log("n", newVector.x, newVector.y);
-        return newVector;
-    };
-
-    this.limitMagnitude = (maxMagnitude) => {
-        const magnitude = this.magnitude();
-        let newVector = new Vector2(this.x, this.y);
-        if(magnitude > maxMagnitude) {
-            newVector = newVector.normalized().mul(maxMagnitude);
-        }
-        return newVector;
-    };
 }
 
 function Vector3(x, y, z) {
     this.x = x;
     this.y = y;
     this.z = z;
-
-    this.add = (other) => {
-        return new Vector3(this.x + other.x, this.y + other.y, this.z + other.z);
-    };
-
-    this.sub = (other) => {
-        return new Vector3(this.x - other.x, this.y - other.y, this.z - other.z);
-    };
-
-    this.mul = (scalar) => {
-        return new Vector3(this.x * scalar, this.y * scalar, this.z * scalar);
-    };
-
-    this.negated = () => {
-        return new Vector3(-this.x, -this.y, -this.z);
-    };
-
-    this.magnitude = () => {
-        return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
-    };
-
-    this.distance = (other) => {
-        return this.sub(other).magnitude();
-    };
-
-    this.normalized = () => {
-        let magnitude = this.magnitude();
-        let newVector = new Vector3(this.x, this.y, this.z);
-        if(magnitude > 0) {
-            newVector = newVector.mul(1.0/magnitude);
-        }
-        //console.log("n", newVector.x, newVector.y);
-        return newVector;
-    };
-
-    this.limitMagnitude = (maxMagnitude) => {
-        const magnitude = this.magnitude();
-        let newVector = new Vector3(this.x, this.y, this.z);
-        if(magnitude > maxMagnitude) {
-            newVector = newVector.normalized().mul(maxMagnitude);
-        }
-        return newVector;
-    };
 }
+
+function Vector4(x, y, z, w) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+}
+
+//VEC2 FUNCTIONS
+function vec2_add(left, right) {
+    return new Vector2(left.x + right.x, left.y + right.y);
+};
+
+function vec2_sub(left, right)  {
+    return new Vector2(left.x - right.x, left.y - right.y);
+};
+
+function vec2_mul(vec, scalar) {
+    return new Vector2(vec.x * scalar, vec.y * scalar);
+};
+
+function vec2_negated(vec) {
+    return new Vector2(-vec.x, -vec.y);
+};
+
+function vec2_magnitude(vec) {
+    return Math.sqrt((vec.x * vec.x) + (vec.y * vec.y));
+};
+
+function vec2_distance(left, right) {
+    return vec2_magnitude(vec2_sub(left, right));
+};
+
+function vec2_normalized(vec) {
+    let magnitude = vec2_magnitude(vec);
+    let newVector = new Vector2(vec.x, vec.y);
+    if(magnitude > 0) {
+        newVector = vec2_mul(newVector, 1.0/magnitude);
+    }
+    //console.log("n", newVector.x, newVector.y);
+    return newVector;
+};
+
+function vec2_limitMagnitude(vec, maxMagnitude) {
+    const magnitude = vec2_magnitude(vec);
+    let newVector = new Vector2(vec.x, vec.y);
+    if(magnitude > maxMagnitude) {
+        newVector = vec2_mul(vec2_normalize(newVector),maxMagnitude);
+    }
+    return newVector;
+};
+
+//VEC3 FUNCTIONS
+function vec3_add(left, right) {
+    return new Vector3(left.x + right.x, left.y + right.y, left.z + right.z);
+};
+
+function vec3_sub(left, right) {
+    return new Vector3(left.x - right.x, left.y - right.y, left.z - right.z);
+};
+
+function vec3_mul(left, scalar) {
+    return new Vector3(left.x * scalar, left.y * scalar, left.z * scalar);
+};
+
+function vec3_negated(vec) {
+    return new Vector3(-vec.x, -vec.y, -vec.z);
+};
+
+function vec3_magnitude(vec) {
+    return Math.sqrt((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
+};
+
+function vec3_distance(left, right) {
+    return vec3_magnitude(vec3_sub(left, right));
+};
+
+function vec3_normalized(vec) {
+    let magnitude = vec3_magnitude(vec);
+    let newVector = new Vector3(vec.x, vec.y, vec.z);
+    if(magnitude > 0) {
+        newVector = vec3_mul(newVector, 1.0/magnitude);
+    }
+    //console.log("n", newVector.x, newVector.y);
+    return newVector;
+};
+
+function vec3_limitMagnitude(vec, maxMagnitude) {
+    const magnitude = vec3_magnitude(vec);
+    let newVector = new Vector3(vec.x, vec.y, vec.z);
+    if(magnitude > maxMagnitude) {
+        newVector = vec3_mul(vec3_normalized(newVector), maxMagnitude);
+    }
+    return newVector;
+};
 
 function vec3cross(v1, v2) {
     return new Vector3(
@@ -103,56 +112,51 @@ function vec3cross(v1, v2) {
     );
 }
 
-function Vector4(x, y, z, w) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = w;
+//VEC4 FUNCTIONS
 
-    this.clone = () => {
-        return new Vector4(this.x, this.y, this.z, this.w);
-    };
+function vec4_clone(vec) {
+    return new Vector4(vec.x, vec.y, vec.z, vec.w);
+};
 
-    this.add = (other) => {
-        return new Vector4(this.x + other.x, this.y + other.y, this.z + other.z, this.w + other.w);
-    };
+function vec4_add(left, right) {
+    return new Vector4(left.x + other.x, left.y + other.y, left.z + other.z, left.w + other.w);
+};
 
-    this.sub = (other) => {
-        return new Vector4(this.x - other.x, this.y - other.y, this.z - other.z, this.w - other.w);
-    };
+function vec4_sub(left, right) {
+    return new Vector4(left.x - other.x, left.y - other.y, left.z - other.z, left.w - other.w);
+};
 
-    this.mul = (scalar) => {
-        return new Vector4(this.x * scalar, this.y * scalar, this.z * scalar, this.w * scalar);
-    };
+function vec4_mul(vec, scalar) {
+    return new Vector4(vec.x * scalar, vec.y * scalar, vec.z * scalar, vec.w * scalar);
+};
 
-    this.negated = () => {
-        return new Vector4(-this.x, -this.y, -this.z, -this.w);
-    };
+function vec4_negated(vec) {
+    return new Vector4(-vec.x, -vec.y, -vec.z, -vec.w);
+};
 
-    this.magnitude = () => {
-        return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z) + (this.w * this.w));
-    };
+function vec4_magnitude(vec) {
+    return Math.sqrt((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z) + (vec.w * vec.w));
+};
 
-    this.distance = (other) => {
-        return this.sub(other).magnitude();
-    };
+function vec4_distance(left, right) {
+    return vec4_magnitude(vec4_sub(left, right));
+};
 
-    this.normalized = () => {
-        let magnitude = this.magnitude();
-        let newVector = new Vector4(this.x, this.y, this.z, this.w);
-        if(magnitude > 0) {
-            newVector = newVector.mul(1.0/magnitude);
-        }
-        //console.log("n", newVector.x, newVector.y);
-        return newVector;
-    };
+function vec4_normalized(vec) {
+    let magnitude = vec4_magnitude(vec);
+    let newVector = new Vector4(vec.x, vec.y, vec.z, vec.w);
+    if(magnitude > 0) {
+        newVector = vec4_mul(newVector, 1.0/magnitude);
+    }
+    //console.log("n", newVector.x, newVector.y);
+    return newVector;
+};
 
-    this.limitMagnitude = (maxMagnitude) => {
-        const magnitude = this.magnitude();
-        let newVector = new Vector4(this.x, this.y, this.z, this.w);
-        if(magnitude > maxMagnitude) {
-            newVector = newVector.normalized().mul(maxMagnitude);
-        }
-        return newVector;
-    };
-}
+function vec4_limitMagnitude(maxMagnitude) {
+    const magnitude = vec4_magnitude(vec);
+    let newVector = new Vector4(vec.x, vec.y, vec.z, vec.w);
+    if(magnitude > maxMagnitude) {
+        newVector = vec4_mul(vec4_normalized(newVector), maxMagnitude);
+    }
+    return newVector;
+};
