@@ -198,7 +198,7 @@ window.onload = function () {
     }
 
     function drawTriangles() {
-        context.fillStyle = '#FAFAFA';
+        context.fillStyle = '#F8F8F8';
 
         for (let i = 0; i < b.length; i++) {
             const points = [
