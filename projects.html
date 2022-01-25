@@ -3,9 +3,10 @@ layout: default
 title: Projects
 permalink: /projects/
 ---
-
+<script type="text/javascript" src="../assets/rasterizer/vector.js"></script>
+<script type="text/javascript" src="../assets/boids/core.js"></script>
+<canvas id="boidscanvas" width="2000px" style="position: absolute; left: 0px; margin-top: -30px; z-index: -1;"></canvas>
 This page lists games and related projects I've worked on. The list is non-exhaustive and more pages will be added!
-
 <div class="project-cards">
     {% assign projects = site.projects | sort: 'year' | reverse %}
     {% for project in projects %}

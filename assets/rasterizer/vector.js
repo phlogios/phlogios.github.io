@@ -55,7 +55,7 @@ function vec2_limitMagnitude(vec, maxMagnitude) {
     const magnitude = vec2_magnitude(vec);
     let newVector = new Vector2(vec.x, vec.y);
     if(magnitude > maxMagnitude) {
-        newVector = vec2_mul(vec2_normalize(newVector),maxMagnitude);
+        newVector = vec2_mul(vec2_normalized(newVector),maxMagnitude);
     }
     return newVector;
 };

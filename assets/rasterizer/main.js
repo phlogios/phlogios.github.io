@@ -4,7 +4,9 @@ window.onload = function () {
     const canvas = document.getElementById("mycanvas");
     const context = canvas.getContext("2d");
     context.imageSmoothingEnabled = false;
-    const aspectRatio = 640.0 / 480.0;
+    const width = canvas.width;
+    const height = canvas.height;
+    const aspectRatio = width / height;
     let triangles = [
         {v0: 0, v1: 1, v2: 3}, {v0: 3, v1: 1, v2: 2},
         {v0: 1, v1: 5, v2: 2}, {v0: 2, v1: 5, v2: 6},
@@ -38,30 +40,42 @@ window.onload = function () {
         faceNormals[i] = new Vector4(normal3.x, normal3.y, normal3.z, 0.0);
     }
 
-    let myImageData = context.createImageData(640, 480);
+    let myImageData = context.createImageData(width, height);
 
-    function clear() {
+    function setupImage() {
         for(let i = 0; i < myImageData.data.length; i = i + 4) {
-            myImageData.data[i] = 0;
-            myImageData.data[i+1] = 0;
-            myImageData.data[i+2] = 0;
             myImageData.data[i+3] = 255;
         }
     }
 
-    clear();
+    function clear() {
+        for(let i = 0; i < myImageData.data.length; i = i + 4) {
+            myImageData.data[i] = 0;
+            //myImageData.data[i+1] = 0;
+            //myImageData.data[i+2] = 0;
+            //myImageData.data[i+3] = 255;
+        }
+    }
+
+    setupImage();
 
     function drawPointShaded(point, normal) {
-        const pixelIndex = (Math.floor(point.x + point.y*640)) * 4;
         const shade = 255 * (normal.z * 0.5 + 0.5);
+        const pixelIndex = (point.x + point.y) * 4;
         myImageData.data[pixelIndex] = shade;
         myImageData.data[pixelIndex+1] = shade;
         myImageData.data[pixelIndex+2] = shade;
     }
 
-    function drawPoint(point) {
+    function drawPointFlatshaded(point, shade) {
+        const pixelIndex = (point.x + point.y) * 4;
+        myImageData.data[pixelIndex] = shade;
+        //myImageData.data[pixelIndex+1] = shade;
+        //myImageData.data[pixelIndex+2] = shade;
+    }
 
-        const pixelIndex = (Math.floor(point.x + point.y*640)) * 4;
+    function drawPoint(point) {
+        const pixelIndex = (point.x + point.y) * 4;
         myImageData.data[pixelIndex] = 255;
         myImageData.data[pixelIndex+1] = 255;
         //myImageData.data[pixelIndex+2] = 0;
@@ -76,6 +90,7 @@ window.onload = function () {
     }
 
     function fillBottomFlatTriangle(v1, v2, v3, normal) {
+        const shade = 255 * (normal.z * 0.5 + 0.5);
         let invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
         let invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
         if(invslope1 < invslope2) {
@@ -90,19 +105,20 @@ window.onload = function () {
         let pixel = new Vector2();
         for (let scanlineY = yStart; scanlineY <= yEnd; scanlineY++)
         {
-            pixel.y = scanlineY;
-            const clampedx1 = Math.min(640, curx1);
-            const clampedx2 = Math.max(0, curx2);
+            pixel.y = scanlineY * width; //premultiplied with screen width for performance in array indexing
+            const clampedx1 = Math.min(width, curx1) | 0;
+            const clampedx2 = Math.max(0, curx2) | 0;
             for(let x = clampedx1; x >= clampedx2; x--) {
                 pixel.x = x;
-                drawPointShaded(pixel, normal);
+                drawPointFlatshaded(pixel, shade);
             }
-            curx1 += invslope1;
-            curx2 += invslope2;
+            curx1 = curx1 + invslope1;
+            curx2 = curx2 + invslope2;
         }
     }
 
     function fillTopFlatTriangle(v1, v2, v3, normal) {
+        const shade = 255 * (normal.z * 0.5 + 0.5);
         let invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
         let invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
         if(invslope2 < invslope1) {
@@ -117,15 +133,15 @@ window.onload = function () {
         let pixel = new Vector2();
         for (let scanlineY = yStart; scanlineY > yEnd; scanlineY--)
         {
-            pixel.y = scanlineY;
-            const clampedx1 = Math.min(640, curx1);
-            const clampedx2 = Math.max(0, curx2);
+            pixel.y = scanlineY * width; //premultiplied with screen width for performance in array indexing
+            const clampedx1 = Math.min(width, curx1) | 0;
+            const clampedx2 = Math.max(0, curx2) | 0;
             for(let x = clampedx1; x >= clampedx2; x--) {
                 pixel.x = x;
-                drawPointShaded(pixel, normal);
+                drawPointFlatshaded(pixel, shade);
             }
-            curx1 -= invslope1;
-            curx2 -= invslope2;
+            curx1 = curx1 - invslope1;
+            curx2 = curx2 - invslope2;
         }
     }
 
@@ -139,7 +155,13 @@ window.onload = function () {
     const perspectiveMatrix = perspective(bottom, top, left, right, near, far);
     let quat = new Quat(0, 0, 0, 1);
 
+    let lastLoop = Date.now();
+    let fpsText = document.getElementById("fps");
     function main(timestamp) {
+        const thisLoop = Date.now();
+        let fps = 1000 / (thisLoop - lastLoop);
+        lastLoop = thisLoop;
+        fpsText.innerHTML = fps;
         window.requestAnimationFrame(main);
         clear();
         time += 0.01;
@@ -159,8 +181,8 @@ window.onload = function () {
         let transformedPoints = vertices
             .map(function(vertex) { return mulmatvec(mat3, vertex) });
         transformedPoints.forEach(function(vertex) {
-            vertex.x = Math.floor((vertex.x + 1) * 320);
-            vertex.y = Math.floor((vertex.y + 1) * 240);
+            vertex.x = Math.floor((vertex.x + 1) * width/2);
+            vertex.y = Math.floor((vertex.y + 1) * height/2);
         });
 
         let transformedNormals = faceNormals.map(function(normal) { return vec4_normalized(mulmatvec(mat3, normal)); });

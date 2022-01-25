@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2324e879-c76b-45d0-af4f-6758c9d65bf5" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1dqXoPUgHsprpo58vaZfrO7HmTE" />
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" engineId="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" uri="http://localhost:63342/boids/index.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.index.html" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2324e879-c76b-45d0-af4f-6758c9d65bf5" name="Default Changelist" comment="" />
+      <created>1563266507445</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1563266507445</updated>
+      <workItem from="1563266511042" duration="3868000" />
+      <workItem from="1566903676685" duration="2280000" />
+      <workItem from="1567061827629" duration="8061000" />
+      <workItem from="1567516989254" duration="1685000" />
+      <workItem from="1567581147876" duration="2673000" />
+      <workItem from="1568276125218" duration="12149000" />
+      <workItem from="1568789470640" duration="2863000" />
+      <workItem from="1568876022808" duration="3553000" />
+      <workItem from="1571125410312" duration="622000" />
+      <workItem from="1572337971934" duration="2202000" />
+      <workItem from="1572448622870" duration="596000" />
+      <workItem from="1575373701917" duration="599000" />
+      <workItem from="1575540617396" duration="960000" />
+      <workItem from="1575892138678" duration="42000" />
+      <workItem from="1593153771922" duration="237000" />
+      <workItem from="1593154235452" duration="317000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+</project>
