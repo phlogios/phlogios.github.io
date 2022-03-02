@@ -152,7 +152,7 @@ window.onload = function () {
     const bottom = -top;
     const right = top * aspectRatio;
     const left = -right;
-    const perspectiveMatrix = perspective(bottom, top, left, right, near, far);
+    const perspectiveMatrix = transpose(mat4_perspective(bottom, top, left, right, near, far));
     let quat = new Quat(0, 0, 0, 1);
 
     let lastLoop = Date.now();

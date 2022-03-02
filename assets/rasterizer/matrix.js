@@ -79,8 +79,8 @@ function mulvecmat(vec, mat) {
     return out;
 }
 
-function perspective(b, t, l, r, n, f) {
-    return transpose(new Mat4([
+function mat4_perspective(b, t, l, r, n, f) {
+    return new Mat4([
         2 * n / (r - l),
         0,
         0,
@@ -100,5 +100,5 @@ function perspective(b, t, l, r, n, f) {
         0,
         -2 * f * n / (f - n),
         0
-    ]));
+    ]);
 }

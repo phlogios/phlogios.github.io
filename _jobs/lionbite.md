@@ -2,7 +2,7 @@
 start_year: 2021
 end_year: 2021
 length: 3 months
-company: Lionbite
+company: Lionbite (Contractor)
 tags:
     - Unity
     - HDRP
